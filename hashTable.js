@@ -1,5 +1,7 @@
 function HashTable() {
   // Set your HashTable's buckets and count
+  this.buckets = [];
+  this.count = 0;
 }
 
 // DO NOT WORRY ABOUT THIS FUNCTION
@@ -30,13 +32,14 @@ HashTable.prototype.setItem = function(key, value) {
     // If it does, change that key's value to the new value I'm passing in 
     // Return the HashTable's buckets to see the result of your insertion
 
+
     // 2) Otherwise, push this new key/value pair into this targetBucket and increment count
     // Return the HashTable's buckets to see the result of your insertion
 
 
-  // ELSE (if targetBucket does not have any stuff in it), 
-    // Insert the new key/value pair
-    // Increment count and return the HashTable's buckets to see the result of your insertion
+
+  // ELSE (if targetBucket does not have any stuff in it), insert the new key/value pair
+  // Increment count and return the HashTable's buckets to see the result of your insertion
 
 }
 
@@ -45,14 +48,13 @@ HashTable.prototype.getItem = function(key) {
 
   // Look at the bucket at that index (targetBucket)
 
-  // Go through the key/value pairs in the bucket at this index 
+  // IF targetBucket exists and already has stuff in it: 
 
+    // Go through the key/value pairs in the bucket at this index 
     // Find the one where the key matches the key I'm looking for
     // Return that key/value pair's value
 
-
-
-  // Return error message if key/value pair was not found
+  // Otherwise, return error message if targetBucket doesn't exist or if key/value pair was not found in targetBucket
 
 }
 
@@ -61,13 +63,13 @@ HashTable.prototype.removeItem = function(key) {
 
   // Look at the bucket at that index (targetBucket)
 
-  // Go through the key/value pairs in the targetBucket 
-  // Filter out the key/value pair where the key matches the key I'm looking for
+  // IF targetBucket exists and already has stuff in it:
+    // Go through the key/value pairs in the targetBucket 
+    // Filter out the key/value pair where the key matches the key I'm looking for
 
+    // If a key/value pair was removed, decrement count and return the HashTable's buckets to look at them after removal
 
-  // If a key/value pair was removed, decrement count
-
-  // Return the HashTable's buckets to take a look at what they are after removing a key/value pair
+  // Otherwise, return error message if targetBucket doesn't exist or if key/value pair was not found in targetBucket
 
 }
 
@@ -90,6 +92,27 @@ HashTable.prototype.values = function() {
 HashTable.prototype.clear = function() {
   // Clear your HashTable's buckets and set count back to 0
 
-  // Return the whole HashTable to take a look at it after clearing
+
+  // Return the whole HashTable to look at it after clearing
 
 }
+
+// EXAMPLE CODE TO RUN IN NODE REPL
+// var myHashTable = new HashTable();
+// myHashTable.setItem('Adam', 5);
+// myHashTable.setItem('Bill', 10);
+// myHashTable.setItem('Bill', 2);
+// myHashTable.setItem('Carol', 6);
+// myHashTable.setItem('Diane', 15);
+// myHashTable.setItem('Esther', 8));
+
+// myHashTable.getItem('Bill');
+// myHashTable.getItem('Zoe'));
+
+// myHashTable.removeItem('Diane');
+// myHashTable.removeItem('Zoe'));
+
+// myHashTable.keys();
+// myHashTable.values());
+
+// myHashTable.clear());

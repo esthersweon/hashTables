@@ -68,19 +68,22 @@ HashTable.prototype.getItem = function(key) {
   // Look at the bucket at that index (targetBucket)
   var targetBucket = this.buckets[idxOfBucketToLookIn];
 
-  // Go through the key/value pairs in the bucket at this index 
-  for (var i = 0; i < targetBucket.length; i++) {
-    var eachKeyValPair = targetBucket[i];
+  // IF targetBucket exists and already has stuff in it: 
+  if (targetBucket && targetBucket.length > 0) {
+    // Go through the key/value pairs in the bucket at this index 
+    for (var i = 0; i < targetBucket.length; i++) {
+      var eachKeyValPair = targetBucket[i];
 
-    // Find the one where the key matches the key I'm looking for
-    // Return that key/value pair's value
-    if (eachKeyValPair[0] === key) {
-      return eachKeyValPair[1];
+      // Find the one where the key matches the key I'm looking for
+      // Return that key/value pair's value
+      if (eachKeyValPair[0] === key) {
+        return eachKeyValPair[1];
+      }
     }
   }
 
-  // Return error message if key/value pair was not found
-  return 'Key/value pair does not exist in hash table.';
+  // Otherwise, return error message if targetBucket doesn't exist or if key/value pair was not found in targetBucket
+  return `${ key } does not exist in hash table – could not get.`;
 }
 
 HashTable.prototype.removeItem = function(key) {
@@ -90,20 +93,24 @@ HashTable.prototype.removeItem = function(key) {
   // Look at the bucket at that index (targetBucket)
   var targetBucket = this.buckets[idxOfBucketToLookIn];
 
-  // Go through the key/value pairs in the targetBucket 
-  // Filter out the key/value pair where the key matches the key I'm looking for
-  newTargetBucket = targetBucket.filter(eachKeyValPair => {
-    return eachKeyValPair[0] !== key;
-  });
+  // IF targetBucket exists and already has stuff in it:
+  if (targetBucket && targetBucket.length > 0) {
+    // Go through the key/value pairs in the targetBucket 
+    // Filter out the key/value pair where the key matches the key I'm looking for
+    newTargetBucket = targetBucket.filter(eachKeyValPair => {
+      return eachKeyValPair[0] !== key;
+    });
 
-  // If a key/value pair was removed, decrement count
-  if (newTargetBucket.length < targetBucket.length) {
-    this.buckets[idxOfBucketToLookIn] = newTargetBucket;
-    this.count -= 1;
+    // If a key/value pair was removed, decrement count and return the HashTable's buckets to look at them after removal
+    if (newTargetBucket.length < targetBucket.length) {
+      this.buckets[idxOfBucketToLookIn] = newTargetBucket;
+      this.count -= 1;
+      return this.buckets;
+    }
   }
 
-  // Return the HashTable's buckets to take a look at what they are after removing a key/value pair
-  return this.buckets;
+  // Otherwise, return error message if targetBucket doesn't exist or if key/value pair was not found in targetBucket
+  return `${ key } does not exist in hash table – could not remove.`;
 }
 
 HashTable.prototype.keys = function() {
@@ -143,6 +150,26 @@ HashTable.prototype.clear = function() {
   this.buckets = [];
   this.count = 0;
 
-  // Return the whole HashTable to take a look at it after clearing
+  // Return the whole HashTable to look at it after clearing
   return this;
 }
+
+// EXAMPLE CODE TO RUN IN NODE REPL
+// var myHashTable = new HashTable();
+// myHashTable.setItem('Adam', 5);
+// myHashTable.setItem('Bill', 10);
+// myHashTable.setItem('Bill', 2);
+// myHashTable.setItem('Carol', 6);
+// myHashTable.setItem('Diane', 15);
+// myHashTable.setItem('Esther', 8));
+
+// myHashTable.getItem('Bill');
+// myHashTable.getItem('Zoe'));
+
+// myHashTable.removeItem('Diane');
+// myHashTable.removeItem('Zoe'));
+
+// myHashTable.keys();
+// myHashTable.values());
+
+// myHashTable.clear());
