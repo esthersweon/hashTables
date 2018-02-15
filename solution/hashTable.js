@@ -1,11 +1,12 @@
 function HashTable() {
-	// Set your HashTable's buckets and count
+  // Set your HashTable's buckets and count
   this.buckets = [];
   this.count = 0;
 }
 
+// DO NOT WORRY ABOUT THIS FUNCTION
 String.prototype.hashCode = function(){
-	var max = 5; // hard-coded, for purposes of this exercise - will always give index 0 ~ 4
+  var max = 5; // hard-coded, for purposes of this exercise - will always give idx 0 ~ 4
   var hash = 0;
   if (this.length == 0) return hash;
 
@@ -19,104 +20,129 @@ String.prototype.hashCode = function(){
 };
 
 HashTable.prototype.setItem = function(key, value) {
-	// Format how you're going to store this new key/value pair 
-  var bucketItem = [key, value];
+  // Format how you're going to store this new key/value pair 
+  var myPair = [key, value];
 
-	// Find the index at which this new key/value pair should be stored
-  var index = key.hashCode();
+  // Find the index at which this new key/value pair should be stored
+  var idxOfBucket = key.hashCode();
 
   // Look at the bucket at that index (targetBucket)
-  var targetBucket = this.buckets[index];
+  var targetBucket = this.buckets[idxOfBucket];
 
-  // If targetBucket exists and already has stuff in it:
-  // 1) Check if the key I want to save already exists in that bucket
-  // 2) If it does, change that key's value to the new value I'm passing in
-  // 3) Otherwise, push this new key/value pair into this targetBucket and increment count
-  if (targetBucket && targetBucket.length) {
-  	var keyAlreadyExistsInBucket = false;
-    for (let i = 0; i < targetBucket.length; i++) {  
-      if (targetBucket[i][0] === key) {
-      	keyAlreadyExistsInBucket = true;
-        targetBucket[i][1] = value;
+  // IF targetBucket exists and already has stuff in it:
+  if (targetBucket && targetBucket.length > 0) {
+
+    // 1) Check if the key I want to save already exists in that bucket
+    // If it does, change that key's value to the new value I'm passing in 
+    // Return the HashTable's buckets to see the result of your insertion
+    for (var i = 0; i < targetBucket.length; i++) {
+      var eachKeyValPair = targetBucket[i];
+
+      if (eachKeyValPair[0] === key) {
+        eachKeyValPair[1] = value;
+        return this.buckets; // exit out, i am done setting the value
       }
-    } 
-
-   	if (!keyAlreadyExistsInBucket) {
-			targetBucket.push(bucketItem);
-	  	this.count++
     }
-  } 
-  // Else (if targetBucket does not have any stuff in it), insert the new key/value pair
-  // Increment count
-  else {
-  	this.buckets[index] = [bucketItem];
-  	this.count++
+
+    // 2) Otherwise, push this new key/value pair into this targetBucket and increment count
+    // Return the HashTable's buckets to see the result of your insertion
+    targetBucket.push(myPair);
+    this.count += 1
+    return this.buckets;
   }
 
-  // Return the HashTable's buckets to take a look at what you just inserted
-  return this.buckets;
+
+  // ELSE (if targetBucket does not have any stuff in it), insert the new key/value pair
+  // Increment count and return the HashTable's buckets to see the result of your insertion
+  else {
+    this.buckets[idxOfBucket] = [ myPair ];
+    this.count += 1;
+    return this.buckets;
+  }
 }
 
 HashTable.prototype.getItem = function(key) {
-	// Find the index at which this key should be stored
-	let index = key.hashCode();
+  // Find the index at which this key should be stored
+  var idxOfBucketToLookIn = key.hashCode();
 
-	// Go through the items in the bucket at this index 
-	// Find the one where the key matches the key I'm looking for
-	let bucketItem = this.buckets[index].find(bucketItem => bucketItem[0] === key);
+  // Look at the bucket at that index (targetBucket)
+  var targetBucket = this.buckets[idxOfBucketToLookIn];
 
-	// Return that item's value
-	return bucketItem[1];
+  // Go through the key/value pairs in the bucket at this index 
+  for (var i = 0; i < targetBucket.length; i++) {
+    var eachKeyValPair = targetBucket[i];
+
+    // Find the one where the key matches the key I'm looking for
+    // Return that key/value pair's value
+    if (eachKeyValPair[0] === key) {
+      return eachKeyValPair[1];
+    }
+  }
+
+  // Return error message if key/value pair was not found
+  return 'Key/value pair does not exist in hash table.';
 }
 
 HashTable.prototype.removeItem = function(key) {
-	// Find the index at which this key should be stored
-	let index = key.hashCode();
+  // Find the index at which this key should be stored
+  var idxOfBucketToLookIn = key.hashCode();
 
-	// Go through the items in the bucket at this index 
-	// Find the one where the key matches the key I'm looking for, and remove it
-  this.buckets[index] = this.buckets[index].filter(bucketItem => bucketItem[0] !== key);
+  // Look at the bucket at that index (targetBucket)
+  var targetBucket = this.buckets[idxOfBucketToLookIn];
 
-  // Decrement count
-  this.count--;
+  // Go through the key/value pairs in the targetBucket 
+  // Filter out the key/value pair where the key matches the key I'm looking for
+  newTargetBucket = targetBucket.filter(eachKeyValPair => {
+    return eachKeyValPair[0] !== key;
+  });
 
-  // Return the HashTable's buckets to take a look at what they are post-removal
+  // If a key/value pair was removed, decrement count
+  if (newTargetBucket.length < targetBucket.length) {
+    this.buckets[idxOfBucketToLookIn] = newTargetBucket;
+    this.count -= 1;
+  }
+
+  // Return the HashTable's buckets to take a look at what they are after removing a key/value pair
   return this.buckets;
 }
 
 HashTable.prototype.keys = function() {
-	// Iterate through all your buckets
-	// For each bucket, iterate through all items and get the keys (0 idx value)
   var keys = [];
-  for (var idx = 0; idx < this.buckets.length; idx++) {
-    this.buckets[idx].forEach(bucketItem => {
-    	keys.push(bucketItem[0]);
-    });
-  }
+
+  // Iterate through all your buckets
+  this.buckets.forEach(eachBucket => {
+
+    // For each bucket, iterate through all key/value pairs and get the keys (0 idx value)
+    eachBucket.forEach(eachKeyValPair => {
+      keys.push(eachKeyValPair[0]);
+    })
+  });
 
   // Return the keys
   return keys;
 }
 
 HashTable.prototype.values = function() {
-	// Iterate through all your buckets
-	// For each bucket, iterate through all items and get the values (1 idx value)
   var values = [];
-  for (var idx = 0; idx < this.buckets.length; idx++) {
-    this.buckets[idx].forEach(bucketItem => {
-    	values.push(bucketItem[1]);
-    });
-  }
+
+  // Iterate through all your buckets
+  this.buckets.forEach(eachBucket => {
+
+    // For each bucket, iterate through all key/value pairs and get the values (1 idx value)
+    eachBucket.forEach(eachKeyValPair => {
+      values.push(eachKeyValPair[1]);
+    })
+  });
 
   // Return the values
   return values;
 }
 
 HashTable.prototype.clear = function() {
-	// Clear your HashTable's buckets and set count back to 0
+  // Clear your HashTable's buckets and set count back to 0
   this.buckets = [];
   this.count = 0;
 
-  // Return the whole HashTable to take a look at it post-clearing
+  // Return the whole HashTable to take a look at it after clearing
   return this;
 }
